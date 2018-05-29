@@ -1,0 +1,12 @@
+[package]
+name = "calldown"
+version = "0.0.0"
+authors = ["Fabian Freyer <fabian.freyer@physik.tu-berlin.de>"]
+description = "OpenContainer-compliant Jails on FreeBSD"
+keywords = ["container", "freebsd"]
+license = "BSD-3-Clause"
+readme = "README.md"
+repository = "https://github.com/fubarnetes/calldown"
+
+[dependencies]
+jail = "^0.0.1"
