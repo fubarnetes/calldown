@@ -3,6 +3,8 @@ use std::collections::HashMap;
 use std::process::Command;
 use std::str::Split;
 
+use zfs::Datasets;
+
 /// Represents a `zpool`.
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ZPool {
@@ -67,6 +69,21 @@ impl ZPool {
         }
 
         props
+    }
+
+    /// Return an Iterator over all datasets in this zpool.
+    ///
+    /// # Example
+    /// ```
+    /// # use calldown::zfs::ZPool;
+    /// # for zpool in ZPool::all().iter() {
+    /// for dataset in zpool.datasets().iter() {
+    ///     println!("{}", dataset.name.to_str().unwrap());
+    /// }
+    /// # }
+    /// ```
+    pub fn datasets(&self) -> Datasets {
+        Datasets::new(self.name.clone().into())
     }
 }
 
