@@ -10,3 +10,4 @@ repository = "https://github.com/fubarnetes/calldown"
 
 [dependencies]
 jail = "^0.0.1"
+csv = "1"

@@ -1,8 +1,10 @@
+use csv;
+use std::collections::HashMap;
 use std::process::Command;
 use std::str::Split;
 
 /// Represents a `zpool`.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ZPool {
     pub name: String,
 }
@@ -30,6 +32,42 @@ impl ZPool {
     pub fn all() -> ZPools {
         ZPools::default()
     }
+
+    /// Get the properties of a zpool as a HashMap
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// # use calldown::zfs::ZPool;
+    /// # for zpool in ZPool::all().iter() {
+    /// let props = zpool.properties();
+    /// println!("{:#?}", props);
+    /// # assert!(props.contains_key("version"));
+    /// # }
+    /// ```
+    pub fn properties(&self) -> HashMap<String, String> {
+        let output = Command::new("zpool")
+            .arg("get")
+            .arg("-H")
+            .arg("-p")
+            .arg("all")
+            .arg(&self.name)
+            .output()
+            .expect("Could not run `zpool get` command");
+
+        let mut rdr = csv::ReaderBuilder::new()
+            .delimiter(b'\t')
+            .has_headers(false)
+            .from_reader(&output.stdout[..]);
+
+        let mut props: HashMap<String, String> = HashMap::new();
+
+        for record in rdr.records().filter_map(|r| r.ok()) {
+            props.insert(record[1].into(), record[2].into());
+        }
+
+        props
+    }
 }
 
 pub struct ZPools {
@@ -47,7 +85,7 @@ impl Default for ZPools {
             .expect("failed to run zpool command")
             .stdout;
 
-        let zpool_list = String::from_utf8_lossy(&zpool_list).to_string();
+        let zpool_list = String::from_utf8_lossy(&zpool_list).trim().to_string();
 
         ZPools { zpool_list }
     }
