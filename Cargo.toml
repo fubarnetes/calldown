@@ -9,4 +9,4 @@ readme = "README.md"
 repository = "https://github.com/fubarnetes/calldown"
 
 [dependencies]
-jail = "^0.0.1"
+jail = "^0.0.4"
