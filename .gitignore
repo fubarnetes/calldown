@@ -1,2 +1,4 @@
 /target
 **/*.rs.bk
+src/zfs/libzfs_core_sys.rs
+rusty-tags.vi
